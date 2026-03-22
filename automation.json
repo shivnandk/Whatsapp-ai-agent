@@ -1,0 +1,1597 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "DELETE FROM chat_messages\nWHERE id IN (\n  SELECT id FROM chat_messages\n  WHERE contact_uid = $1\n  ORDER BY created_at DESC\n  OFFSET 20\n)\n",
+                "options": {
+                    "queryReplacement": "={{ $json.contact_uid }}"
+                }
+            },
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                9008,
+                5232
+            ],
+            "id": "7051aeec-d2ec-4376-ad56-f4f9565d144a",
+            "name": "Trim History",
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "schema": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "public"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "chat_messages",
+                    "mode": "list",
+                    "cachedResultName": "chat_messages"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "role": "assistant",
+                        "content": "={{ $('Route Message Type1').item.json.caption }}",
+                        "created_at": "={{ $now }} ",
+                        "mobile_number": "={{ $('Route Message Type1').item.json.phoneNumber.trim()}}",
+                        "image_url": "={{ $('Route Message Type1').item.json.imageUrl }}",
+                        "wamid": "={{ $json.data.wamid }}",
+                        "contact_uid": "={{ $json.data.contact_uid.trim()}}"
+                    },
+                    "matchingColumns": [
+                        "id"
+                    ],
+                    "schema": [
+                        {
+                            "id": "id",
+                            "displayName": "id",
+                            "required": false,
+                            "defaultMatch": true,
+                            "display": true,
+                            "type": "number",
+                            "canBeUsedToMatch": true,
+                            "removed": true
+                        },
+                        {
+                            "id": "contact_uid",
+                            "displayName": "contact_uid",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "role",
+                            "displayName": "role",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "content",
+                            "displayName": "content",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "created_at",
+                            "displayName": "created_at",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "dateTime",
+                            "canBeUsedToMatch": true,
+                            "removed": false
+                        },
+                        {
+                            "id": "mobile_number",
+                            "displayName": "mobile_number",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "image_url",
+                            "displayName": "image_url",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "wamid",
+                            "displayName": "wamid",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true,
+                            "removed": false
+                        }
+                    ],
+                    "attemptToConvertTypes": false,
+                    "convertFieldsToString": false
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                8736,
+                5056
+            ],
+            "id": "fd7501e7-f291-4508-b53b-d92d281bf7df",
+            "name": "Store Image Response",
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "schema": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "public"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "chat_messages",
+                    "mode": "list",
+                    "cachedResultName": "chat_messages"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "contact_uid": "={{ $json.data.contact_uid.trim()}}",
+                        "role": "assistant",
+                        "content": "={{ $('Parse JSON Response1').item.json.messageText }}",
+                        "mobile_number": "={{ $json.data.phone_number.trim()}}",
+                        "created_at": "={{ DateTime.now().setZone('Asia/Kolkata').toISO() }}",
+                        "wamid": "={{ $json.data.wamid }}"
+                    },
+                    "matchingColumns": [
+                        "id"
+                    ],
+                    "schema": [
+                        {
+                            "id": "id",
+                            "displayName": "id",
+                            "required": false,
+                            "defaultMatch": true,
+                            "display": true,
+                            "type": "number",
+                            "canBeUsedToMatch": true,
+                            "removed": true
+                        },
+                        {
+                            "id": "contact_uid",
+                            "displayName": "contact_uid",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "role",
+                            "displayName": "role",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "content",
+                            "displayName": "content",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "created_at",
+                            "displayName": "created_at",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "dateTime",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "mobile_number",
+                            "displayName": "mobile_number",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "image_url",
+                            "displayName": "image_url",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true,
+                            "removed": true
+                        },
+                        {
+                            "id": "wamid",
+                            "displayName": "wamid",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true,
+                            "removed": false
+                        }
+                    ],
+                    "attemptToConvertTypes": false,
+                    "convertFieldsToString": false
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                8720,
+                5392
+            ],
+            "id": "1784d4ff-e410-494b-9e39-3de7468a4c2d",
+            "name": "Store Text Response",
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const contactData = $('Extract Contact Data1').first().json;\n\n// Get chat history from PostgreSQL\nconst historyItems = $input.all();\n\n// Build conversation context\nlet chatHistory = \"\";\n\nif (historyItems.length > 0) {\n  chatHistory = \"\\n\\n=== PREVIOUS CONVERSATION ===\\n\";\n  \n  historyItems.forEach(item => {\n    const msg = item.json;\n    const speaker = msg.role === 'user' ? 'Customer' : 'AI Laptopwala';\n    chatHistory += `${speaker}: ${msg.content}\\n`;\n  });\n  \n  chatHistory += \"=== END OF CONVERSATION ===\\n\\n\";\n}\n\n// AI Classification: Detect service vs sales intent\nconst messageText = contactData.messageText.toLowerCase();\n\n// Service/repair keywords (Hindi, English, Hinglish)\nconst serviceKeywords = [\n  'repair', 'service', 'thik kro', 'thik karo', 'fix', 'kharab', \n  'problem', 'issue', 'warranty claim', 'maintenance', 'servicing',\n  'repair karo', 'theek karo', 'kaam nahi kar raha', 'not working',\n  'broken', 'damage', 'screen broken', 'keyboard issue', 'battery problem'\n];\n\n// Sales keywords (Hindi, English, Hinglish)\nconst salesKeywords = [\n  'buy', 'purchase', 'laptop chahiye', 'desktop chahiye', 'price', \n  'budget', 'kharidna', 'lena hai', 'kitne ka', 'kitne mein',\n  'available', 'stock', 'new laptop', 'gaming laptop', 'office laptop',\n  'student laptop', 'specifications', 'specs', 'ram', 'storage'\n];\n\n// Check for service keywords\nconst hasServiceKeyword = serviceKeywords.some(keyword => messageText.includes(keyword));\n\n// Check for sales keywords\nconst hasSalesKeyword = salesKeywords.some(keyword => messageText.includes(keyword));\n\n// Determine category (default to sales if unclear)\nlet category = 'sales';\nif (hasServiceKeyword && !hasSalesKeyword) {\n  category = 'services';\n} else if (hasServiceKeyword && hasSalesKeyword) {\n  // If both present, prioritize based on context\n  // For now, default to sales unless service keywords are more prominent\n  const serviceCount = serviceKeywords.filter(k => messageText.includes(k)).length;\n  const salesCount = salesKeywords.filter(k => messageText.includes(k)).length;\n  category = serviceCount > salesCount ? 'services' : 'sales';\n}\n\n// Return data with chat history and category\nreturn [{\n  json: {\n    contactUid: contactData.contactUid,\n    firstName: contactData.firstName,\n    phoneNumber: contactData.phoneNumber,\n    messageText: contactData.messageText,\n    phoneNumberId: contactData.phoneNumberId,\n    chatHistory: chatHistory,\n    category: category\n  }\n}];\n"
+            },
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                5552,
+                5088
+            ],
+            "id": "792df798-c92e-46cc-817c-05952c9899d9",
+            "name": "Code in JavaScript"
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT role, content, created_at FROM chat_messages WHERE contact_uid = $1 ORDER BY created_at ASC LIMIT 20",
+                "options": {
+                    "queryReplacement": "={{ $('Extract Contact Data1').item.json.contactUid }}"
+                }
+            },
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                5360,
+                5072
+            ],
+            "id": "c4ed06ab-8021-4ea0-98a6-7e135ce57fbc",
+            "name": "Fetch Chat History",
+            "alwaysOutputData": true,
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "schema": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "public"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "chat_messages",
+                    "mode": "list",
+                    "cachedResultName": "chat_messages"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "contact_uid": "={{ $json.contactUid.trim()}}",
+                        "role": "user",
+                        "content": "={{ $json.messageText }} ",
+                        "mobile_number": "={{ $json.phoneNumber.trim()}}",
+                        "wamid": "={{ $('Webhook - Receive Message').item.json.body.message.whatsapp_message_id }}",
+                        "created_at": "={{ DateTime.now().setZone('Asia/Kolkata').toISO() }}",
+                        "name": "={{ $json.firstName }}",
+                        "image_url": "={{ $json.body.message.media.link }}"
+                    },
+                    "matchingColumns": [
+                        "id"
+                    ],
+                    "schema": [
+                        {
+                            "id": "id",
+                            "displayName": "id",
+                            "required": false,
+                            "defaultMatch": true,
+                            "display": true,
+                            "type": "number",
+                            "canBeUsedToMatch": true,
+                            "removed": true
+                        },
+                        {
+                            "id": "contact_uid",
+                            "displayName": "contact_uid",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "role",
+                            "displayName": "role",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "content",
+                            "displayName": "content",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "created_at",
+                            "displayName": "created_at",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "dateTime",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "mobile_number",
+                            "displayName": "mobile_number",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "image_url",
+                            "displayName": "image_url",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true,
+                            "removed": false
+                        },
+                        {
+                            "id": "wamid",
+                            "displayName": "wamid",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true,
+                            "removed": false
+                        },
+                        {
+                            "id": "name",
+                            "displayName": "name",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": true,
+                            "removed": false
+                        }
+                    ],
+                    "attemptToConvertTypes": false,
+                    "convertFieldsToString": false
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                5136,
+                5088
+            ],
+            "id": "4241c576-34c7-4fae-b5c0-eb614b50e119",
+            "name": "Store User Message",
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "amount": "={{ $json.delaySeconds }}"
+            },
+            "id": "6c59c4b9-bbae-428b-a013-31db43db0cb2",
+            "name": "Wait Between Images1",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+                7904,
+                5184
+            ],
+            "webhookId": "images-delay"
+        },
+        {
+            "parameters": {
+                "jsCode": "const item = $input.first().json;\nconst products = item.products || {};\nconst keys = Object.keys(products);\nconst output = [];\nconst productType = item.productType;\n\n// =========================\n// 📝 Intro Message\n// =========================\nif (item.messageText) {\n  output.push({\n    json: {\n      phoneNumberId: item.phoneNumberId,\n      phoneNumber: item.phoneNumber,\n      messageType: 'text',\n      message: item.messageText,\n      delaySeconds: 0\n    }\n  });\n}\n\n// =========================\n// 🔄 Product Loop\n// =========================\n\nkeys.forEach((key, productIndex) => {\n\n  const product = products[key];\n\n  const priceRange = product.Price_Range || 'Price on request';\n  const stockQty = product.Stock_Quantity ?? 0;\n\n  let urgencyText = '';\n\n  if (stockQty <= 2 && stockQty > 0) {\n    urgencyText = '🔥 *Only ' + stockQty + ' left!*\\n';\n  } else if (stockQty <= 5 && stockQty > 2) {\n    urgencyText = '⚡ *' + stockQty + ' units left - Selling fast!*\\n';\n  }\n\n  // =========================\n  // 🎯 Dynamic Caption Builder\n  // =========================\n\n  let caption = '';\n\n  // 💻 LAPTOP\n  if (productType === 'laptop') {\n\n    caption =\n      `*${productIndex + 1}/${keys.length}: ${product.Brand ?? ''} ${product.Model ?? ''}*\\n` +\n      `${urgencyText}` +\n      `\\n💰 *₹${priceRange}*\\n` +\n      `⚡ ${product.Processor ?? 'N/A'} | 🧠 ${product.RAM_GB ?? 'N/A'}GB RAM\\n` +\n      `💾 ${product.Storage_GB ?? 'N/A'}GB ${product.Storage_Type ?? ''} | 📺 ${product.Screen_Size ?? ''}\\n` +\n      `🎮 ${product.Graphics ?? 'Integrated'} | ✨ ${product.Condition ?? ''}\\n` +\n      `🛡️ ${product.Warranty_in_months ?? ''}mo warranty | 🎁 ${product.Special_Feature ?? ''}`;\n\n  }\n\n  // 🖥 DESKTOP (FIXED)\nelse if (productType === 'desktop') {\n\n  caption =\n    `*${productIndex + 1}/${keys.length}: ${product.Brand ?? ''} ${product.Model ?? ''}*\\n` +\n    `${urgencyText}` +\n    `\\n💰 *₹${priceRange}*\\n` +\n    `⚡ ${product.Processor ?? ''} ${product.Generation ?? ''}\\n` +\n    `🧠 ${product.RAM_GB ?? ''}GB ${product.RAM_Type ?? ''}\\n` +\n    `💾 ${product.Storage_GB ?? ''}GB\\n` +\n    `📺 ${product.Monitor_Size ?? ''} inch\\n` +\n    `✨ ${product.Condition ?? ''}\\n` +\n    `🛡️ ${product.Warranty_in_months ?? ''}mo warranty\\n` +\n    `🎁 ${product.Special_Feature ?? ''}`;\n\n\n  }\n\n  // 🔌 ACCESSORY\n  else if (productType === 'accessory') {\n\n    caption =\n      `*${productIndex + 1}/${keys.length}: ${product.Accessories_Name ?? ''}*\\n` +\n      `\\n💰 *₹${priceRange}*`;\n\n  }\n\n  // 🧩 Default Safe\n  else {\n    caption =\n      `*${productIndex + 1}/${keys.length}: Product*\\n` +\n      `💰 ₹${priceRange}`;\n  }\n\n  // =========================\n  // 📞 Footer\n  // =========================\n\n  caption +=\n    `\\n\\n📞 *Order now:* 9893496163\\n` +\n    `🎁 *Follow for exclusive gifts:*\\n` +\n    `📸 Instagram: https://www.instagram.com/ailaptopwala/\\n` +\n    `🎥 YouTube: https://www.youtube.com/@ailaptopwala`;\n\n\n  // =========================\n  // 🖼 IMAGE HANDLING\n  // =========================\n\n  const imageUrl1 = product.Image_Url_1;\n  const imageUrl2 = product.Image_Url_2;\n\n  const hasImage1 = imageUrl1 && imageUrl1.trim() !== '' && imageUrl1 !== 'null';\n  const hasImage2 = imageUrl2 && imageUrl2.trim() !== '' && imageUrl2 !== 'null';\n\n  if (item.showImages && (hasImage1 || hasImage2)) {\n\n    if (hasImage1) {\n      output.push({\n        json: {\n          phoneNumberId: item.phoneNumberId,\n          phoneNumber: item.phoneNumber,\n          messageType: 'image',\n          imageUrl: imageUrl1,\n          caption: caption + '\\n\\n📷 *Image 1*',\n          delaySeconds: (productIndex * 3) + 1\n        }\n      });\n    }\n\n    if (hasImage2) {\n      output.push({\n        json: {\n          phoneNumberId: item.phoneNumberId,\n          phoneNumber: item.phoneNumber,\n          messageType: 'image',\n          imageUrl: imageUrl2,\n          caption: '📷 *Image 2*',\n          delaySeconds: (productIndex * 3) + 2\n        }\n      });\n    }\n\n  } else {\n\n    output.push({\n      json: {\n        phoneNumberId: item.phoneNumberId,\n        phoneNumber: item.phoneNumber,\n        messageType: 'text',\n        message: caption,\n        delaySeconds: (productIndex * 3) + 1\n      }\n    });\n\n  }\n\n});\n\nreturn output;"
+            },
+            "id": "908cc0c4-c235-4480-a71f-26685a5ebe24",
+            "name": "Format Product Images1",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                7552,
+                5024
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.WBUZ_API_URL }}/contact/send-media-message",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "={{ 'Bearer ' + $env.WBUZ_API_TOKEN }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ {\n  \"from_phone_number_id\": $json.phoneNumberId,\n  \"phone_number\": $json.phoneNumber,\n  \"media_type\": \"image\",\n  \"media_url\": $json.imageUrl,\n  \"caption\": $json.caption || $json.message\n} }}",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                8480,
+                5040
+            ],
+            "id": "e6381da3-83a3-4384-a785-15545fda0f89",
+            "name": "Send Product with Image1"
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "values": [
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict",
+                                    "version": 1
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.hasProducts }}",
+                                        "rightValue": true,
+                                        "operator": {
+                                            "type": "boolean",
+                                            "operation": "true"
+                                        },
+                                        "id": "3a74c50a-b022-4936-85ee-6608682f5a10"
+                                    },
+                                    {
+                                        "leftValue": "={{ $json.showImages }}",
+                                        "rightValue": false,
+                                        "operator": {
+                                            "type": "boolean",
+                                            "operation": "false"
+                                        },
+                                        "id": "showimages-false-check"
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "With Products (Normal)"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict",
+                                    "version": 1
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.hasProducts }}",
+                                        "rightValue": true,
+                                        "operator": {
+                                            "type": "boolean",
+                                            "operation": "true"
+                                        },
+                                        "id": "hasproducts-true-check"
+                                    },
+                                    {
+                                        "leftValue": "={{ $json.showImages }}",
+                                        "rightValue": true,
+                                        "operator": {
+                                            "type": "boolean",
+                                            "operation": "true"
+                                        },
+                                        "id": "showimages-true-check"
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "With Products (Carousel)"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict",
+                                    "version": 1
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.hasProducts }}",
+                                        "rightValue": false,
+                                        "operator": {
+                                            "type": "boolean",
+                                            "operation": "false"
+                                        },
+                                        "id": "88273564-5e42-43e7-a8f8-24c771e779d3"
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "Text Only"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "fcc8bf66-67dc-4821-ad06-21faaaba560f",
+            "name": "Route by Response Type1",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3,
+            "position": [
+                7056,
+                5088
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const aiOutput = $input.first().json.output;\nconst contactData = $('Extract Contact Data1').first().json;\n\n// =========================\n// 🧹 CLEAN AI OUTPUT\n// =========================\nlet cleaned = aiOutput;\n\nif (typeof aiOutput === 'string') {\n  cleaned = aiOutput\n    .replace(/```json/gi, '')\n    .replace(/```/g, '')\n    .trim();\n}\n\nlet parsedResponse;\n\ntry {\n\n  parsedResponse = JSON.parse(cleaned);\n\n  // =========================\n  // 🛡 BASE VALIDATION\n  // =========================\n  if (!parsedResponse.message) {\n    parsedResponse.message = \"I found some options for you!\";\n  }\n\n  if (!parsedResponse.products || typeof parsedResponse.products !== 'object') {\n    parsedResponse.products = {};\n  }\n\n  if (typeof parsedResponse.showImages !== 'boolean') {\n    parsedResponse.showImages = false;\n  }\n\n  if (!parsedResponse.productType) {\n    parsedResponse.productType = null;\n  }\n\n  // =========================\n  // 🔥 NORMALIZATION\n  // =========================\n\n  if (Object.keys(parsedResponse.products).length > 0) {\n\n    const normalizedProducts = {};\n    let imageFound = false;\n\n    Object.keys(parsedResponse.products).forEach(key => {\n\n      const product = parsedResponse.products[key] || {};\n\n      // =====================\n      // 💰 PRICE CLEANER\n      // =====================\n      const rawPrice =\n        product.Price_Range ??\n        product.price_range ??\n        product.price_range_inr ??\n        product.price ??\n        null;\n\n      let cleanedPrice = null;\n      let priceMin = null;\n      let priceMax = null;\n\n      if (rawPrice) {\n        cleanedPrice = rawPrice.toString().replace(/₹/g, '').trim();\n        const split = cleanedPrice.split('-');\n\n        if (split.length === 2) {\n          priceMin = parseInt(split[0]);\n          priceMax = parseInt(split[1]);\n        } else {\n          priceMin = parseInt(cleanedPrice);\n          priceMax = parseInt(cleanedPrice);\n        }\n      }\n\n      // =====================\n      // 🖼 UNIVERSAL IMAGE FIX\n      // =====================\n      const image1 = product.Image_Url_1 ?? product.image_url_1 ?? null;\n      const image2 = product.Image_Url_2 ?? product.image_url_2 ?? null;\n\n      if (image1 || image2) {\n        imageFound = true;\n      }\n\n      // =====================\n      // 🧠 SMART DEVICE DETECTION\n      // =====================\n      const hasBrandModel = product.Brand || product.Model;\n\n      // =====================\n      // 💻 LAPTOP\n      // =====================\n      if (parsedResponse.productType === \"laptop\") {\n\n        normalizedProducts[key] = {\n          Brand: product.Brand ?? null,\n          Model: product.Model ?? null,\n          Processor: product.Processor ?? null,\n          RAM_GB: product.RAM_GB ?? null,\n          Storage_Type: product.Storage_Type ?? null,\n          Storage_GB: product.Storage_GB ?? null,\n          Screen_Size: product.Screen_Size ?? product.Monitor_Size ?? null,\n          Graphics: product.Graphics ?? null,\n          Condition: product.Condition ?? null,\n          Stock_Quantity: product.Stock_Quantity ?? null,\n          Special_Feature: product.Special_Feature ?? null,\n          Warranty_in_months: product.Warranty_in_months ?? null,\n          Price_Range: cleanedPrice,\n          Price_Min: priceMin,\n          Price_Max: priceMax,\n          Image_Url_1: image1,\n          Image_Url_2: image2\n        };\n\n      }\n\n      // =====================\n      // 🖥 DESKTOP (FIXED)\n      // =====================\n      else if (parsedResponse.productType === \"desktop\") {\n\n        // If AI sent Brand/Model structure → treat like computer device\n        if (hasBrandModel) {\n\n          normalizedProducts[key] = {\n            Brand: product.Brand ?? null,\n            Model: product.Model ?? null,\n            Processor: product.Processor ?? null,\n            Generation: product.Generation ?? null,\n            RAM_GB: product.RAM_GB ?? null,\n            RAM_Type: product.RAM_Type ?? null,\n            Storage_GB: product.Storage_GB ?? null,\n            Monitor_Size: product.Monitor_Size ?? null,\n            Graphics: product.Graphics ?? null,\n            Condition: product.Condition ?? null,\n            Stock_Quantity: product.Stock_Quantity ?? null,\n            Special_Feature: product.Special_Feature ?? null,\n            Warranty_in_months: product.Warranty_in_months ?? null,\n            Price_Range: cleanedPrice,\n            Price_Min: priceMin,\n            Price_Max: priceMax,\n            Image_Url_1: image1,\n            Image_Url_2: image2\n          };\n\n        } else {\n\n          // Legacy desktop structure fallback\n          normalizedProducts[key] = {\n            Name: product.name ?? null,\n            Processor: product.processor ?? null,\n            RAM: product.ram ?? null,\n            Storage: product.storage ?? null,\n            Monitor_Size: product.monitor ?? null,\n            Condition: product.condition ?? null,\n            Warranty: product.warranty ?? null,\n            Special_Feature: product.special_feature ?? null,\n            Stock_Quantity: product.stock_quantity ?? null,\n            Price_Range: cleanedPrice,\n            Price_Min: priceMin,\n            Price_Max: priceMax,\n            Image_Url_1: image1,\n            Image_Url_2: image2\n          };\n\n        }\n\n      }\n\n      // =====================\n      // 🔌 ACCESSORY\n      // =====================\n      else if (parsedResponse.productType === \"accessory\") {\n\n        normalizedProducts[key] = {\n          Accessories_Name: product.accessories_name ?? product.Accessories_Name ?? null,\n          Price_Range: cleanedPrice,\n          Price_Min: priceMin,\n          Price_Max: priceMax,\n          Image_Url_1: image1,\n          Image_Url_2: image2\n        };\n\n      }\n\n      // =====================\n      // 🧩 DEFAULT SAFE\n      // =====================\n      else {\n\n        normalizedProducts[key] = {\n          ...product,\n          Image_Url_1: image1,\n          Image_Url_2: image2\n        };\n\n      }\n\n    });\n\n    parsedResponse.products = normalizedProducts;\n\n    if (imageFound) {\n      parsedResponse.showImages = true;\n    }\n\n  }\n\n} catch (e) {\n\n  console.error('JSON Parse Error:', e);\n  console.error('Raw AI Output:', aiOutput);\n\n  return [{\n    phoneNumberId: contactData.phoneNumberId,\n    phoneNumber: contactData.phoneNumber,\n    messageText: \"I apologize, I'm having trouble processing that. Could you rephrase your request?\",\n    hasProducts: false,\n    error: true\n  }];\n}\n\n// =========================\n// 📤 FINAL RETURN\n// =========================\n\nif (Object.keys(parsedResponse.products).length > 0) {\n\n  return [{\n    phoneNumberId: contactData.phoneNumberId,\n    phoneNumber: contactData.phoneNumber,\n    messageText: parsedResponse.message,\n    hasProducts: true,\n    showImages: parsedResponse.showImages ?? false,\n    productType: parsedResponse.productType ?? null,\n    products: parsedResponse.products\n  }];\n\n} else {\n\n  return [{\n    phoneNumberId: contactData.phoneNumberId,\n    phoneNumber: contactData.phoneNumber,\n    messageText: parsedResponse.message,\n    hasProducts: false,\n    showImages: false,\n    productType: parsedResponse.productType ?? null\n  }];\n\n}"
+            },
+            "id": "fee49dc8-2c8c-4686-9264-91e0094b66cd",
+            "name": "Parse JSON Response1",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                6800,
+                5120
+            ]
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "= {{ $json.messageText }}",
+                "options": {
+                    "systemMessage": "=---\n# AI Laptopwala – Your A Refurbished Laptop And Desktop Shop Owner & Tech Expert (Memory-Enabled, Safe Mode)\n---\n## 🔹 SYSTEM MEMORY (PROVIDED BY SYSTEM, TRUSTED)\nAlways remember Histoy\n{{ $json.chatHistory }}\n```\n## 🔹 REPLIED MESSAGE CONTEXT (IF AVAILABLE)\n{{ $json.content }}\nIn Reply IF Sending Product Card  Also Check Database Tool For Image Link Other wise Only Sending MSg Process\n\n**Memory object may contain (or be empty):**\n\n* `lastProductsShown`: ordered list of product keys (e.g. `[\"p1\",\"p2\",\"p3\"]`)\n* `lastProductType`: `\"laptop\"` | `\"desktop\"` | `\"accessory\"`\n* `lastPreferences`:\n\n  * `budgetMin`\n  * `budgetMax`\n  * `brand`\n  * `usage`\n  * `ram`\n  * `storage`\n\n### Memory Rules (STRICT)\n\n1. Use memory only for follow-ups like:\n\n   * \"that one\", \"first laptop\", \"same brand\"\n   * \"show images\", \"16GB instead?\"\n2. If user gives new budget/specs → **override memory**\n3. Never invent memory values\n4. If memory is missing or unclear → ask a short clarification question\n5. Never mention memory or history to the user\n---\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n## 🔹 CURRENT USER MESSAGE (HIGHEST PRIORITY INPUT)\n\n```\n{{ $json.messageText }}\n```\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n---\n## 🗓️ Current Date\n**{{ $now.format('MMMM dd, yyyy') }}**\n---\n## 🔹 CORE RULES (MANDATORY)\n1. **ALWAYS respond in valid JSON**\n2. You are **AI Laptopwala** – speak like a friendly, experienced laptop shop expert\n3. **Match customer language** (Hindi / English / Hinglish) in `\"message\"` only\n4. **JSON structure must ALWAYS be:**\n\n   ```json\n   {\n     \"message\": \"string\",\n     \"products\": {},\n     \"productType\": \"laptop|desktop|accessory|mixed\",\n     \"showImages\": false\n   }\n   ```\n5. `products` must be `{}` when empty (never null)\n6. Return **maximum 2–4 products**\n7. Numbers must be real numbers, not strings\n8. **CRITICAL BUSINESS RULES**\n\n   * Laptops / Desktops → `Stock_Quantity > 0` ONLY\n   * Accessories → no stock filtering\n9. Share contact details **ONLY when buying intent is clear**\n10. **NEVER say you are a bot or AI**\n11. When Share Images Should Be Link Formate From Database\n---\n## 🔹 DATABASE TOOLS - CRITICAL INSTRUCTIONS\n**YOU MUST USE THE PROVIDED DATABASE TOOLS TO FETCH REAL PRODUCT DATA**\n### Available Tools:\n1. **Laptop Database Tool** - Query the laptops table\n2. **Desktops Database Tool** - Query the desktops table\n3. **Accessories Database Tool** - Query the accessories table\n### MANDATORY DATABASE QUERY RULES:\n1. **ALWAYS use the database tools** to fetch real product information\n2. **NEVER make up or invent product data** - only return products from the actual database\n3. **For Laptops & Desktops**: ALWAYS filter by `Stock_Quantity > 0` in your queries\n4. **For Accessories**: No stock filtering required\n5. When customer asks for products, you MUST:\n   - Call the appropriate database tool (Laptop/Desktop/Accessory)\n   - Apply filters based on customer requirements (budget, brand, RAM, etc.)\n   - Return ONLY the products that exist in the database\n### Example Database Query Flow:\n- Customer: \"Show me laptops under 30000\"\n- Action: Call Laptop Database Tool with filter: Stock_Quantity > 0 AND Price_Range <= 30000\n- Return: Real products from database in JSON format\n\n**REMEMBER: The database tools are your source of truth. Never return product information without querying the database first.**\n---\n## 🔹 productType RULES\n* `\"laptop\"` → laptop results\n* `\"desktop\"` → desktop results\n* `\"accessory\"` → accessories\n* `\"mixed\"` → general questions or multiple categories\n---\n## 🔹 showImages RULE\n\n* `false` → normal search (send **ONE image per product**)\n* `true` → user says \"show\", \"show images\", \"that one\"\n  → send **BOTH images**\n\n---\n## 🔹 Postgres Database Tool\n\n### Laptop Database Tool\n\n`Brand`, `Model`, `Processor`, `RAM_GB`, `Storage_Type`, `Storage_GB`,\n`Screen_Size`, `Graphics`, `Condition`, `Price_Range`, `Stock_Quantity`,\n`Special_Feature`, `Warranty_in_months`, `Image_Url_1`, `Image_Url_2`\n\n### Desktops Database Tool\n\n`Brand`, `Model`, `Processor`, `Generation`, `RAM_GB`, `RAM_Type`,\n`Storage_GB`, `Monitor_Size`, `Graphics`, `Condition`, `Price_Range`,\n`Stock_Quantity`, `Special_Feature`, `Warranty_in_months`,\n`Image_Url_1`, `Image_Url_2`\n\n### Accessories Database Tool\n\n`Accessories`, `Price Range (INR)`, `Image_Url_1`, `Image_Url_2`\n---\n## 🔹 SEARCH RULES\n### Laptops / Desktops\n* **CRITICAL**: Always filter `Stock_Quantity > 0` when querying the database\n* Budget → parse `Price_Range` numerically\n* Brand → filter `Brand`\n* RAM → match `RAM_GB`\n* Storage → match `Storage_GB` + `Storage_Type`\n* Sort by **lowest price first**\n* Max 2 results\n### Accessories\n* Match keywords in `Accessories`\n* Budget → filter `Price Range (INR)`\n* No stock filter\n**Accessory keyword mapping:**\n* charger / adapter → Laptop Adapter / Charger\n* screen / display → Laptop LED Screen\n* cable → Display / LVDS / eDP Cable\n* hinge → Laptop Hinge\n* body / panel → Laptop Body / Top Panel\n* base → Laptop Base / Bottom Case\n* keyboard → Laptop Keyboard\n* touchpad → Laptop Touchpad\n\n---\n## 🔹 CONVERSATION HANDLING\n\n* \"that one\" → use `lastProductsShown[0]`\n* \"second one\" → use correct index\n* New specs/budget → ignore old preferences\n* Low stock (1–2) → mention urgency naturally\n* No match → suggest closest alternatives\n* If intent unclear → ask a short clarification question (JSON format)\n* Alwayas TryTo Chat Into Low Text And Dont Ask Many Question with Custmers\n* If no products match the criteria & any stock 0 Dont send product, inform the customer and suggest alternatives from the database\n---\n## 🔹 PERSONALITY & TONE\n* Warm, helpful, human\n* Sounds like a trusted local Shop Owner\n* Light emojis allowed 😊💻🔌\n* Never pushy\n* Never scripted\n* Always Respeted\n* Sales Intent\n---\n## 🔹 BUYING INTENT DETECTION\n**Buying intent signals:**\n* \"I want to buy\"\n* \"Book this\"\n* \"How to order?\"\n* \"Delivery available?\"\n* Payment / warranty questions after interest\n### When detected → include contact info naturally WIth Respeted Msg\n📞 **WhatsApp / Call:** 9893496163\n📸 **Instagram:** https://www.instagram.com/ailaptopwala/\n🎥 **YouTube:** https://www.youtube.com/@ailaptopwala\n---\n## 🔹 RESPONSE EXAMPLES\n### Greeting\nGreet If First Time When Send Some TIme After Send Relted MSg Greet But Use PREVIOUS CONVERSATION And Greet Based On CONVERSATION\n```json\n{\n  \"message\": \"Hello 👋\nAI Laptop Wala mein aapka hardik swagat hai 😊\nAgar aap laptop / desktop kharidna chahte hain, repair ya service karwana ho, genuine accessories chahiye ho 💻🛠️\nya apna purana laptop buy-back / exchange karna chahte hain 🔁\nToh kripya apna budget aur requirement bataiye 👇\nHum aapko best quality, best price aur trusted solution provide karenge ✅ Call For More Informatin - +919893496163\",\n  \"products\": {},\n  \"productType\": \"mixed\",\n  \"showImages\": false\n}\n```\n### Follow-up using memory\n\nUser: \"Show me the first one\"\n\n```json\n{\n  \"message\": \"Ye raha pehla laptop jo humne discuss kiya tha 😊\",\n  \"products\": {\n    \"p1\": { ...product_object... }\n  },\n  \"productType\": \"laptop\",\n  \"showImages\": true\n}\n```\n\n---\nWhen Asked Computer Send Desktop\nUSe Low Token OF Ai And Also optimize Text when sending\nFor First Time Asking For Product Send 2 Product on The User Demand Like Price Range 5000 to 10000 The Demanded Product\n🔹 Products & Services\nRefurbished Laptops & Desktops\nWe provide high-quality, fully tested refurbished laptops and desktops from trusted brands such as Dell, HP, Lenovo, and Apple, offering excellent performance, durability, and value for money.\nSpecialized Computing Solutions\nBudget-friendly gaming laptops & desktops\nBusiness-class systems (including Dell Latitude series)\nStudent-focused laptops and desktops for learning and everyday use\nEach system is selected and configured according to customer needs and budget.\nRepairs, Upgrades & Accessories\nOur services include:\nLaptop and desktop repair & troubleshooting\nMotherboard repair and upgrades\nPerformance tuning and optimization for slow systems\nSales of genuine computer and laptop accessories\nLaptop & Desktop Buy-Back / Exchange\nWe offer fair-value buy-back and exchange services for both laptops and desktops, helping customers upgrade easily and cost-effectively.\nHome Service Across Indore\nWe provide doorstep laptop,desktop service in all areas of indore at your home or office.\nIf Services Date OR Time OR anything Said Custmer Send Him Our Number And Said Call Her For That With Respeted Msg And Like Services Is Ongoing\nPayment Option: EMI(Bajaj Finance-If Your Address 60Km Under Indore,Age Min 25),UPI,Cash On Delivery\nStore Contact & Location Details\nAddress: LB-21 Block-B, Silver Mall, RNT Marg, Indore, Madhya Pradesh, Map Link - https://maps.app.goo.gl/4bHB8HtThq18nkSp7 .\nPhone/WhatsApp: +91 98934 96163.\nEmail: ailaptopwala@gmail.com.\nOperating Hours: Typically open daily from 11:00 AM to 9:00 PM\nIf customer Want To Buy Also Share Mobile Number And Address And Also Call For Visit At Shop"
+                }
+            },
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 1.7,
+            "position": [
+                6400,
+                5120
+            ],
+            "id": "c7dcf5aa-76fd-4022-a573-c378a501fcb2",
+            "name": "AI Sales Agent1"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "contact_uid",
+                            "name": "contactUid",
+                            "value": "={{ $json.body.contact.uid }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "first_name",
+                            "name": "firstName",
+                            "value": "={{ $json.body.whatsapp_webhook_payload.entry[0].changes[0].value.contacts[0].profile.name }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "phone_number",
+                            "name": "phoneNumber",
+                            "value": "={{ $json.body.contact.phone_number }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "message_text",
+                            "name": "messageText",
+                            "value": "={{ $json.body.message.body }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "phone_number_id",
+                            "name": "phoneNumberId",
+                            "value": "={{ $json.body.message.whatsapp_business_phone_number_id }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "c2d951c5-9090-4eef-812b-e102c0f3d3f7",
+                            "name": "body.message.media.link",
+                            "value": "={{ $json.body.message.media.link }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "db793063-9c1b-4217-a975-ab73538246c4",
+            "name": "Extract Contact Data1",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                4720,
+                5072
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.WBUZ_API_URL }}/contact/send-message",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "={{ 'Bearer ' + $env.WBUZ_API_TOKEN }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ {\n  \"from_phone_number_id\": $json.phoneNumberId,\n  \"phone_number\": $json.phoneNumber,\n  \"message_body\": $json.message || $json.messageText\n} }}",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                8496,
+                5456
+            ],
+            "id": "09942f4c-f1d2-4bb1-8f33-3bf1863577dc",
+            "name": "Send Text Message1"
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "values": [
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict",
+                                    "version": 1
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.messageType }}",
+                                        "rightValue": "image",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        },
+                                        "id": "85da2a0f-04a8-4737-9ab5-e69a8ad83960"
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "Image Message"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict",
+                                    "version": 1
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.messageType }}",
+                                        "rightValue": "text",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        },
+                                        "id": "af68d16d-d8e0-4a9e-bdd1-08b85fafae3c"
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "Text Message"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "b62bafd3-df79-49af-97f6-34ffce044b05",
+            "name": "Route Message Type1",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3,
+            "position": [
+                8208,
+                5296
+            ]
+        },
+        {
+            "parameters": {
+                "amount": "={{ $json.delaySeconds }}"
+            },
+            "id": "e8020903-e4e9-485a-84b9-9dba940d359f",
+            "name": "Wait Between Messages1",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+                7904,
+                4976
+            ],
+            "webhookId": "carousel-delay"
+        },
+        {
+            "parameters": {
+                "jsCode": "const item = $input.first().json;\nconst products = item.products || {};\nconst keys = Object.keys(products);\nconst output = [];\nconst productType = item.productType || null;\n\n// =========================\n// 📝 Intro Message\n// =========================\nif (item.messageText) {\n  output.push({\n    json: {\n      phoneNumberId: item.phoneNumberId,\n      phoneNumber: item.phoneNumber,\n      messageType: 'text',\n      message: item.messageText,\n      delaySeconds: 0\n    }\n  });\n}\n\n// =========================\n// 🔄 Product Loop\n// =========================\nkeys.forEach((key, index) => {\n\n  const product = products[key] || {};\n\n  const priceRange = product.Price_Range || 'Price on request';\n  const stockQty = product.Stock_Quantity ?? 0;\n\n  let urgencyText = '';\n\n  if (stockQty <= 2 && stockQty > 0) {\n    urgencyText = '🔥 *Only ' + stockQty + ' left!*\\n';\n  } else if (stockQty <= 5 && stockQty > 2) {\n    urgencyText = '⚡ *' + stockQty + ' units left - Selling fast!*\\n';\n  }\n\n  // =========================\n  // 🎯 Dynamic Caption Builder\n  // =========================\n  let caption = '';\n\n  // 💻 LAPTOP\n  if (productType === 'laptop') {\n\n    caption =\n      `*${index + 1}/${keys.length}: ${product.Brand ?? ''} ${product.Model ?? ''}*\\n` +\n      `${urgencyText}` +\n      `\\n💰 *₹${priceRange}*\\n` +\n      `⚡ ${product.Processor ?? 'N/A'} | 🧠 ${product.RAM_GB ?? 'N/A'}GB RAM\\n` +\n      `💾 ${product.Storage_GB ?? 'N/A'}GB ${product.Storage_Type ?? ''} | 📺 ${product.Screen_Size ?? ''}\\n` +\n      `🎮 ${product.Graphics ?? 'Integrated'} | ✨ ${product.Condition ?? ''}\\n` +\n      `🛡️ ${product.Warranty_in_months ?? ''}mo warranty | 🎁 ${product.Special_Feature ?? ''}`;\n\n  }\n\n  // 🖥 DESKTOP (FIXED)\nelse if (productType === 'desktop') {\n\n  caption =\n    `*${productIndex + 1}/${keys.length}: ${product.Brand ?? ''} ${product.Model ?? ''}*\\n` +\n    `${urgencyText}` +\n    `\\n💰 *₹${priceRange}*\\n` +\n    `⚡ ${product.Processor ?? ''} ${product.Generation ?? ''}\\n` +\n    `🧠 ${product.RAM_GB ?? ''}GB ${product.RAM_Type ?? ''}\\n` +\n    `💾 ${product.Storage_GB ?? ''}GB\\n` +\n    `📺 ${product.Monitor_Size ?? ''} inch\\n` +\n    `✨ ${product.Condition ?? ''}\\n` +\n    `🛡️ ${product.Warranty_in_months ?? ''}mo warranty\\n` +\n    `🎁 ${product.Special_Feature ?? ''}`;\n\n}\n\n  // 🔌 ACCESSORY\n  else if (productType === 'accessory') {\n\n    caption =\n      `*${index + 1}/${keys.length}: ${product.Accessories_Name ?? ''}*\\n` +\n      `\\n💰 *₹${priceRange}*`;\n\n  }\n\n  // 🧩 DEFAULT SAFE\n  else {\n\n    caption =\n      `*${index + 1}/${keys.length}: Product*\\n` +\n      `\\n💰 *₹${priceRange}*`;\n\n  }\n\n  // =========================\n  // 📞 Footer\n  // =========================\n  caption +=\n    `\\n\\n📞 *Order now:* 9893496163\\n` +\n    `🎁 *Follow for exclusive gifts:*\\n` +\n    `📸 Instagram: https://www.instagram.com/ailaptopwala/\\n` +\n    `🎥 YouTube: https://www.youtube.com/@ailaptopwala`;\n\n  // =========================\n  // 🖼 SINGLE IMAGE LOGIC\n  // =========================\n\n  const imageUrl = product.Image_Url_1 || product.Image_Url_2 || null;\n  const hasImage =\n    imageUrl &&\n    typeof imageUrl === 'string' &&\n    imageUrl.trim() !== '' &&\n    imageUrl !== 'null';\n\n  if (item.showImages && hasImage) {\n\n    output.push({\n      json: {\n        phoneNumberId: item.phoneNumberId,\n        phoneNumber: item.phoneNumber,\n        messageType: 'image',\n        imageUrl: imageUrl,\n        caption: caption,\n        delaySeconds: (index * 2) + 1\n      }\n    });\n\n  } else {\n\n    output.push({\n      json: {\n        phoneNumberId: item.phoneNumberId,\n        phoneNumber: item.phoneNumber,\n        messageType: 'text',\n        message: caption,\n        delaySeconds: (index * 2) + 1\n      }\n    });\n\n  }\n\n});\n\nreturn output;"
+            },
+            "id": "27442362-79fb-4b80-889f-887f13e83231",
+            "name": "Format Product Carousel1",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                7552,
+                4832
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "test",
+                "options": {
+                    "rawBody": true
+                }
+            },
+            "id": "3bae7d2a-9936-4a31-b5e4-c4665a309c55",
+            "name": "Webhook - Receive Message",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                4240,
+                5088
+            ],
+            "webhookId": "6c6d90eb-850d-4574-91b8-6a5241fb7cda"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict",
+                        "version": 3
+                    },
+                    "conditions": [
+                        {
+                            "id": "id-1",
+                            "leftValue": "={{ $json.body }}",
+                            "operator": {
+                                "type": "object",
+                                "operation": "notEmpty"
+                            }
+                        },
+                        {
+                            "id": "id-2",
+                            "leftValue": "={{ $json.body.message }}",
+                            "operator": {
+                                "type": "object",
+                                "operation": "notEmpty"
+                            }
+                        },
+                        {
+                            "id": "id-3",
+                            "leftValue": "={{ $json.body.message.body }}{{ $json.body.message.media.link }}",
+                            "operator": {
+                                "type": "string",
+                                "operation": "notEmpty"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "851590aa-40ba-42e2-b288-5159ace46074",
+            "name": "Filter Real Messages Only",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.3,
+            "position": [
+                4464,
+                5088
+            ]
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+            "typeVersion": 1,
+            "position": [
+                6176,
+                5376
+            ],
+            "id": "82ac780e-3520-4dcb-ba5c-708c9fb39cc9",
+            "name": "Google Gemini Chat Model1",
+            "credentials": {
+                "googlePalmApi": {
+                    "id": "={{ $env.GEMINI_CREDENTIAL_ID }}",
+                    "name": "Google Gemini(PaLM) Api account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "descriptionType": "manual",
+                "toolDescription": "Search and retrieve laptop details from the database. Filter by brand, processor, RAM, storage, price range, and stock availability. Always filter Stock_Quantity > 0 for laptops.",
+                "operation": "select",
+                "schema": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "public"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "laptops",
+                    "mode": "list",
+                    "cachedResultName": "laptops"
+                },
+                "returnAll": true,
+                "options": {}
+            },
+            "id": "c0051448-5ce9-4b71-b7f3-d1f51aa98b95",
+            "name": "Laptop Database Tool1",
+            "type": "n8n-nodes-base.postgresTool",
+            "typeVersion": 2.6,
+            "position": [
+                6656,
+                5376
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "descriptionType": "manual",
+                "toolDescription": "Search and retrieve accessories details from the database. Filter by accessory type, keywords, and price range. No stock filtering required for accessories.",
+                "operation": "select",
+                "schema": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "public"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "accessories",
+                    "mode": "list",
+                    "cachedResultName": "accessories"
+                },
+                "returnAll": true,
+                "options": {}
+            },
+            "id": "620a5634-b3d2-4503-a6dc-4c5a5769787d",
+            "name": "Accessories Database Tool1",
+            "type": "n8n-nodes-base.postgresTool",
+            "typeVersion": 2.6,
+            "position": [
+                6352,
+                5376
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "descriptionType": "manual",
+                "toolDescription": "Search and retrieve desktop details from the database. Filter by brand, processor, RAM, storage, price range, and stock availability. Always filter Stock_Quantity > 0 for desktops.",
+                "operation": "select",
+                "schema": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "public"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "desktops",
+                    "mode": "list",
+                    "cachedResultName": "desktops"
+                },
+                "returnAll": true,
+                "options": {}
+            },
+            "id": "1be77745-edd6-401e-b19b-94b85eb97ee8",
+            "name": "Desktops Database Tool1",
+            "type": "n8n-nodes-base.postgresTool",
+            "typeVersion": 2.6,
+            "position": [
+                6512,
+                5376
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "DELETE FROM chat_messages\nWHERE id IN (\n  SELECT id FROM chat_messages\n  WHERE contact_uid = $1\n  ORDER BY created_at DESC\n  OFFSET 20\n)\n",
+                "options": {
+                    "queryReplacement": "={{ $json.contact_uid }}"
+                }
+            },
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                9008,
+                5056
+            ],
+            "id": "3e9ccaed-8da9-4d6d-a052-c5e58d255ed7",
+            "name": "Execute a SQL query1",
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "mode": "combineBySql",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3.2,
+            "position": [
+                6128,
+                4944
+            ],
+            "id": "ee35431b-e730-40b8-b7ef-b8e902dc6e30",
+            "name": "Merge"
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT content FROM chat_messages WHERE wamid = $1 LIMIT 1",
+                "options": {
+                    "queryReplacement": "={{ $('Webhook - Receive Message').first().json.body?.message?.replied_to_whatsapp_message_id || '' }}"
+                }
+            },
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                6128,
+                4784
+            ],
+            "id": "801de7e7-bc83-4439-b563-4b4b5d4b95fc",
+            "name": "Execute a SQL query3",
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "values": [
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict",
+                                    "version": 3
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $('Webhook - Receive Message').first().json.body?.message?.replied_to_whatsapp_message_id || '' }}",
+                                        "rightValue": "=Execute a SQL query3",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "notEmpty",
+                                            "singleValue": true
+                                        },
+                                        "id": "65002562-988a-4102-9121-075d1af20f35"
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "Has Reply"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict",
+                                    "version": 3
+                                },
+                                "conditions": [
+                                    {
+                                        "id": "6ff876e4-a100-4443-9343-79c8e6bcf524",
+                                        "leftValue": "",
+                                        "rightValue": "",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals",
+                                            "name": "filter.operator.equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "not"
+                        }
+                    ]
+                },
+                "options": {
+                    "allMatchingOutputs": false
+                }
+            },
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3.4,
+            "position": [
+                5792,
+                5088
+            ],
+            "id": "80e79d72-c3e7-4512-bfbe-12697c0f1809",
+            "name": "Switch",
+            "alwaysOutputData": false,
+            "executeOnce": false,
+            "notesInFlow": false
+        },
+        {
+            "parameters": {
+                "operation": "upsert",
+                "schema": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "public"
+                },
+                "table": {
+                    "__rl": true,
+                    "value": "chat_messages",
+                    "mode": "list",
+                    "cachedResultName": "chat_messages"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "is_read": false,
+                        "sent_by_admin": false
+                    },
+                    "matchingColumns": [
+                        "id"
+                    ],
+                    "schema": [
+                        {
+                            "id": "id",
+                            "displayName": "id",
+                            "required": false,
+                            "defaultMatch": true,
+                            "display": true,
+                            "type": "number",
+                            "canBeUsedToMatch": true
+                        },
+                        {
+                            "id": "contact_uid",
+                            "displayName": "contact_uid",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "role",
+                            "displayName": "role",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "content",
+                            "displayName": "content",
+                            "required": true,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "created_at",
+                            "displayName": "created_at",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "dateTime",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "mobile_number",
+                            "displayName": "mobile_number",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "image_url",
+                            "displayName": "image_url",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "wamid",
+                            "displayName": "wamid",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "name",
+                            "displayName": "name",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "string",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "is_read",
+                            "displayName": "is_read",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "boolean",
+                            "canBeUsedToMatch": false
+                        },
+                        {
+                            "id": "sent_by_admin",
+                            "displayName": "sent_by_admin",
+                            "required": false,
+                            "defaultMatch": false,
+                            "display": true,
+                            "type": "boolean",
+                            "canBeUsedToMatch": false
+                        }
+                    ],
+                    "attemptToConvertTypes": false,
+                    "convertFieldsToString": false
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.6,
+            "position": [
+                5248,
+                5312
+            ],
+            "id": "7277050a-45e0-402e-9514-46ab084a5e51",
+            "name": "Insert or update rows in a table",
+            "credentials": {
+                "postgres": {
+                    "id": "={{ $env.POSTGRES_CREDENTIAL_ID }}",
+                    "name": "Postgres account"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Store Image Response": {
+            "main": [
+                [
+                    {
+                        "node": "Execute a SQL query1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Store Text Response": {
+            "main": [
+                [
+                    {
+                        "node": "Trim History",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Code in JavaScript": {
+            "main": [
+                [
+                    {
+                        "node": "Switch",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Chat History": {
+            "main": [
+                [
+                    {
+                        "node": "Code in JavaScript",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Store User Message": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Chat History",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Insert or update rows in a table",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait Between Images1": {
+            "main": [
+                [
+                    {
+                        "node": "Route Message Type1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Product Images1": {
+            "main": [
+                [
+                    {
+                        "node": "Wait Between Images1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Product with Image1": {
+            "main": [
+                [
+                    {
+                        "node": "Store Image Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Route by Response Type1": {
+            "main": [
+                [
+                    {
+                        "node": "Format Product Carousel1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Format Product Images1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Send Text Message1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse JSON Response1": {
+            "main": [
+                [
+                    {
+                        "node": "Route by Response Type1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Sales Agent1": {
+            "main": [
+                [
+                    {
+                        "node": "Parse JSON Response1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract Contact Data1": {
+            "main": [
+                [
+                    {
+                        "node": "Store User Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Text Message1": {
+            "main": [
+                [
+                    {
+                        "node": "Store Text Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Route Message Type1": {
+            "main": [
+                [
+                    {
+                        "node": "Send Product with Image1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Send Text Message1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait Between Messages1": {
+            "main": [
+                [
+                    {
+                        "node": "Route Message Type1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Product Carousel1": {
+            "main": [
+                [
+                    {
+                        "node": "Wait Between Messages1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook - Receive Message": {
+            "main": [
+                [
+                    {
+                        "node": "Filter Real Messages Only",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Filter Real Messages Only": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Contact Data1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Google Gemini Chat Model1": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Sales Agent1",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Laptop Database Tool1": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Sales Agent1",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Accessories Database Tool1": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Sales Agent1",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Desktops Database Tool1": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Sales Agent1",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Merge": {
+            "main": [
+                [
+                    {
+                        "node": "AI Sales Agent1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Execute a SQL query3": {
+            "main": [
+                [
+                    {
+                        "node": "Merge",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Switch": {
+            "main": [
+                [
+                    {
+                        "node": "Merge",
+                        "type": "main",
+                        "index": 1
+                    },
+                    {
+                        "node": "Execute a SQL query3",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "AI Sales Agent1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Insert or update rows in a table": {
+            "main": [
+                []
+            ]
+        }
+    },
+    "pinData": {},
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "f1cdbd0ba04d9abfc1f638ca7190ac42251d1a225a0bbe623e10bd90a806302d"
+    }
+}
